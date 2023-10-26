@@ -1,15 +1,14 @@
-import React from "react";
 import { Country } from "../models/country.class";
-import CountryCard from "./CountryCard"; // Import the CountryCard component
+import CountryCard from "./CountryCard";
 
 interface CountrySearchResultsProps {
   results: Country[];
   loading: boolean;
 }
-const CountrySearchResults: React.FC<CountrySearchResultsProps> = ({
-  results,
-  loading,
-}) => {
+
+const CountrySearchResults = (props: CountrySearchResultsProps) => {
+  const { results, loading } = props;
+
   return (
     <div className="row columns is-multiline is-three-thirds-mobile">
       {loading ? (
