@@ -15,19 +15,16 @@ const SearchPage: React.FC = () => {
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(event.target.value);
-    console.log(query);
     setValidInput(isAlphanumeric(query));
   };
 
   const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setCurrentSearchMode(event.target.value);
-    console.log(currentSearchMode);
   };
 
   const handleSearch = async () => {
     if (!(query.trim() === "") && isAlphanumeric(query)) {
       setValidInput(true);
-      console.log("searching", { query, currentSearchMode });
       await fetchCountry(query, currentSearchMode);
     } else {
       setValidInput(false);
@@ -67,7 +64,6 @@ const SearchPage: React.FC = () => {
 
     if (error) {
       console.log(`An error occurred: ${error}`);
-      console.log(`An error occurred: ${error}`);
       setResults([]);
     } else {
       if (Array.isArray(data) && data.length === 0) {
@@ -77,8 +73,6 @@ const SearchPage: React.FC = () => {
       }
     }
     setLoading(false);
-
-    console.log("from new func", results);
   };
 
   const isAlphanumeric = (str: string) => /^[A-Za-z\s.'-]+$/.test(str);

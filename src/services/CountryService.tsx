@@ -15,7 +15,7 @@ class CountryService {
   async getCountriesByName(name: string): Promise<IServiceResponse<Country[]>> {
     try {
       const response = await this.httpClient.get(
-        `http://localhost:5001/countries/name/${name}`
+        `https://countrynodejs-1c8a69fb5708.herokuapp.com/countries/name/${name}`
       );
       if (!response.ok) {
         return {
@@ -35,7 +35,7 @@ class CountryService {
   ): Promise<IServiceResponse<Country[]>> {
     try {
       const response = await this.httpClient.get(
-        `http://localhost:5001/countries/language/${language}`
+        `https://countrynodejs-1c8a69fb5708.herokuapp.com/countries/language/${language}`
       );
       if (!response.ok) {
         return {
@@ -53,7 +53,7 @@ class CountryService {
   async getCountryByCode(code: string): Promise<IServiceResponse<Country>> {
     try {
       const response = await this.httpClient.get(
-        `http://localhost:5001/countries/code/${code}`
+        `https://countrynodejs-1c8a69fb5708.herokuapp.com/countries/code/${code}`
       );
       if (!response.ok) {
         return {
