@@ -47,11 +47,64 @@ const CountryCard: React.FC<CountryCardProps> = ({ country }) => {
 
       <div className={`modal ${modalActive ? "is-active" : ""}`}>
         <div className="modal-background" onClick={closeModal}></div>
-        <div className="modal-content">
-          <div className="modal-card">
-            <p>Additional information about {country?.name.common}</p>
-            <p>Population: {country?.population}</p>
-          </div>
+        <div className="modal-card">
+          <header className="modal-card-head">
+            <p className="modal-card-title">{country?.name.official}</p>
+            <button
+              className="delete"
+              aria-label="close"
+              onClick={closeModal}
+            ></button>
+          </header>
+          <section className="modal-card-body">
+            <div className="hero">
+              <p className="image">
+                <img src={country?.flags.svg} alt="Country Flag" />
+              </p>
+            </div>
+            <div className="level" style={{ marginTop: "1rem" }}>
+              <div className="level-item is-mobile has-text-centered">
+                <div>
+                  <p className="heading">Region</p>
+                  <p className="title">{country?.region}</p>
+                </div>
+              </div>
+              <div className="level-item is-mobile has-text-centered">
+                <div>
+                  <p className="heading">Language</p>
+                  <p className="title">
+                    {country?.cca3 ? country?.cca3 : "N/A"}
+                  </p>
+                </div>
+              </div>
+              <div className="level-item is-mobile has-text-centered">
+                <div>
+                  <p className="heading">Population</p>
+                  <p className="title">
+                    {country?.population.toLocaleString()}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="level">
+              <div>
+                <h3 className="title is-3">Summary</h3>
+                <p>
+                  The {country?.name.official} ({country?.ccn3}) is located in{" "}
+                  {country?.subregion} with a population of approximately{" "}
+                  {country?.population.toLocaleString()}.The language(s) spoken
+                  within the country are{" "}
+                  {Object.values(country?.languages).join(", ")}.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <footer className="modal-card-foot">
+            <button className="button is-success">Save changes</button>
+            <button className="button">Cancel</button>
+          </footer>
         </div>
         <button
           className="modal-close is-large"

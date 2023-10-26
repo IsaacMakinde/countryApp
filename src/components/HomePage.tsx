@@ -24,77 +24,62 @@ const SearchPage: React.FC = () => {
     console.log(currentSearchMode);
   };
 
-  const handleSearch = async (query: string, mode: string) => {
+  const handleSearch = async () => {
     if (!(query.trim() === "") && isAlphanumeric(query)) {
       setValidInput(true);
-      console.log("searching", { query, mode });
-      if (mode === "Name") {
-        await fetchCountryByName(query);
-      } else if (mode === "Code") {
-        await fetchCountryByCode(query);
-      } else if (mode === "Language") {
-        await fetchCountryByLanguage(query);
-      }
+      console.log("searching", { query, currentSearchMode });
+      await fetchCountry(query, currentSearchMode);
     } else {
       setValidInput(false);
     }
   };
 
-  const fetchCountryByName = async (name: string) => {
+  const fetchCountry = async (query: string, mode: string) => {
     try {
       const countryService = new CountryService(FetchClient);
-      const countries: Country[] = await countryService.getCountriesByName(
-        name
-      );
-      if (countries.status === 404) {
-        setResults([]);
-      } else {
-        setResults(countries);
-        setLoading(false);
+      let result;
+      switch (mode) {
+        case "Name":
+          result = await countryService.getCountriesByName(query);
+          break;
+        case "Code":
+          result = await countryService.getCountryByCode(query);
+          break;
+        case "Language":
+          result = await countryService.getCountriesByLanguage(query);
+          break;
+        default:
+          throw new Error("Invalid search mode");
       }
-      console.log("from new name func", results);
+      handleSearchResults(result);
     } catch (error) {
       console.error(error);
       setLoading(false);
     }
   };
 
-  const fetchCountryByCode = async (code: string) => {
-    try {
-      const countryService = new CountryService(FetchClient);
-      const country: Country = await countryService.getCountryByCode(code);
-      if (country.status === 404) {
+  const handleSearchResults = (result: Country | Country[]) => {
+    if (Array.isArray(result)) {
+      if (result.length === 0) {
         setResults([]);
       } else {
-        setResults([country]);
+        setResults(result);
         setLoading(false);
       }
-      console.log("from new code", results);
-    } catch (error) {
-      console.error(error);
-      setLoading(false);
+    } else {
+      // Check for unexpected response format
+      if (result && result.status === 404) {
+        setResults([]);
+      } else if (result) {
+        setResults([result]);
+        setLoading(false);
+      }
     }
+
+    console.log("from new func", results);
   };
 
-  const fetchCountryByLanguage = async (language: string) => {
-    try {
-      const countryService = new CountryService(FetchClient);
-      const countries: Country[] = await countryService.getCountriesByLanguage(
-        language
-      );
-      if (countries.status === 404) {
-        setResults([]);
-      } else {
-        setResults(countries);
-        setLoading(false);
-      }
-      console.log("from new language", results);
-    } catch (error) {
-      console.error(error);
-      setLoading(false);
-    }
-  };
-  const isAlphanumeric = (str: string) => /^[a-zA-Z0-9]+$/.test(str);
+  const isAlphanumeric = (str: string) => /^[A-Za-z\s.'-]+$/.test(str);
 
   useEffect(() => {
     setLoading(false);
@@ -112,17 +97,15 @@ const SearchPage: React.FC = () => {
               <p className="control is-expanded">
                 <input
                   className={`input ${validInput ? "is-info" : "is-danger"}`}
-                  placeholder="Input a Country"
-                  type="text"
-                  value={query}
+                  maxLength={20}
                   onChange={handleInputChange}
+                  placeholder="Input a Country"
+                  title="hello"
+                  value={query}
                 />
               </p>
               <p className="control">
-                <button
-                  className="button is-info"
-                  onClick={() => handleSearch(query, currentSearchMode)}
-                >
+                <button className="button is-info" onClick={handleSearch}>
                   Search
                 </button>
               </p>
