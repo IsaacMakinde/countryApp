@@ -1,5 +1,9 @@
+import { IFetchClient } from "../serviceClients/fetchClient";
+
 class TodoService {
-  constructor(httpClient) {
+  private httpClient: IFetchClient;
+
+  constructor(httpClient: IFetchClient) {
     this.httpClient = httpClient;
   }
 
@@ -15,7 +19,7 @@ class TodoService {
     }
   }
 
-  async createTodos(todo) {
+  async createTodos(todo: unknown) {
     try {
       const response = await this.httpClient.post(
         "https://jsonplaceholder.typicode.com/todos/",

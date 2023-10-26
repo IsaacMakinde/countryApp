@@ -1,4 +1,9 @@
-const FetchClient = {
+export interface IFetchClient {
+  get(url: string): Promise<Response>;
+  post(url: string, body: unknown): Promise<Response>;
+}
+
+const FetchClient: IFetchClient = {
   async get(url: string) {
     return await fetch(url, {
       method: "GET",
@@ -8,7 +13,7 @@ const FetchClient = {
     });
   },
 
-  async post(url: string, body: any) {
+  async post(url: string, body: unknown) {
     return await fetch(url, {
       method: "POST",
       headers: {
@@ -19,4 +24,4 @@ const FetchClient = {
   },
 };
 
-export default FetchClient;
+export default FetchClient
