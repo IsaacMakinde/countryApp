@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Country } from "../models/country.class";
 import CountrySearchResults from "./CountrySearchResults";
-
-import FetchClient from "../serviceClients/fetchClient";
-import CountryService from "../services/CountryService";
+import CountryService, { IServiceResponse } from "../services/CountryService";
+import { FetchClient } from "../serviceClients/fetchClient";
 
 const SearchPage: React.FC = () => {
   const [query, setQuery] = useState<string>("");
@@ -35,48 +34,41 @@ const SearchPage: React.FC = () => {
   };
 
   const fetchCountry = async (query: string, mode: string) => {
+    setLoading(true);
     try {
       const countryService = new CountryService(FetchClient);
-      let result;
+      let serviceResponse: IServiceResponse<Country | Country[]>;
       switch (mode) {
-        case "Name":
-          result = await countryService.getCountriesByName(query);
+        case 'Name':
+          serviceResponse = await countryService.getCountriesByName(query);
           break;
-        case "Code":
-          result = await countryService.getCountryByCode(query);
+        case 'Code':
+          serviceResponse = await countryService.getCountryByCode(query);
           break;
-        case "Language":
-          result = await countryService.getCountriesByLanguage(query);
+        case 'Language':
+          serviceResponse = await countryService.getCountriesByLanguage(query);
           break;
         default:
-          throw new Error("Invalid search mode");
+          throw new Error('Invalid search mode');
       }
-      handleSearchResults(result);
+      handleSearchResults(serviceResponse);
     } catch (error) {
       console.error(error);
       setLoading(false);
     }
   };
 
-  const handleSearchResults = (result: Country | Country[]) => {
-    if (Array.isArray(result)) {
-      if (result.length === 0) {
-        setResults([]);
-      } else {
-        setResults(result);
-        setLoading(false);
-      }
+  const handleSearchResults = (serviceResponse: IServiceResponse<Country | Country[]>) => {
+    const { data, error } = serviceResponse;
+    if (error) {
+      console.error(`An error occurred: ${error}`);
+      // Handle the error on the UI, maybe set an error state
+    } else if (Array.isArray(data)) {
+      setResults(data.length === 0 ? [] : data);
     } else {
-      // Check for unexpected response format
-      if (result && result.status === 404) {
-        setResults([]);
-      } else if (result) {
-        setResults([result]);
-        setLoading(false);
-      }
+      setResults(data ? [data] : []);
     }
-
-    console.log("from new func", results);
+    setLoading(false);  // Always set loading to false after handling results
   };
 
   const isAlphanumeric = (str: string) => /^[A-Za-z\s.'-]+$/.test(str);
@@ -94,28 +86,19 @@ const SearchPage: React.FC = () => {
         <div className="column">
           <div className="box">
             <div className="field is-grouped">
-              <p className="control is-expanded">
-                <input
-                  className={`input ${validInput ? "is-info" : "is-danger"}`}
-                  maxLength={20}
-                  onChange={handleInputChange}
-                  placeholder="Input a Country"
-                  title="hello"
-                  value={query}
-                />
-              </p>
-              <p className="control">
-                <button className="button is-info" onClick={handleSearch}>
-                  Search
-                </button>
-              </p>
-              <div className="select">
-                <select value={currentSearchMode} onChange={handleSelectChange}>
-                  <option value="Name">Name</option>
-                  <option value="Code">Code</option>
-                  <option value="Language">Language</option>
-                </select>
-              </div>
+              <input
+                className={`input ${validInput ? "is-info" : "is-danger"}`}
+                maxLength={20}
+                onChange={handleInputChange}
+                placeholder="Input a Country"
+                value={query}
+              />
+              <button className="button is-info" onClick={handleSearch}>Search</button>
+              <select value={currentSearchMode} onChange={handleSelectChange}>
+                <option value="Name">Name</option>
+                <option value="Code">Code</option>
+                <option value="Language">Language</option>
+              </select>
             </div>
           </div>
         </div>
