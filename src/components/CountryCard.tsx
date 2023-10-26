@@ -101,10 +101,7 @@ const CountryCard: React.FC<CountryCardProps> = ({ country }) => {
             </div>
           </section>
 
-          <footer className="modal-card-foot">
-            <button className="button is-success">Save changes</button>
-            <button className="button">Cancel</button>
-          </footer>
+          <footer className="modal-card-foot"></footer>
         </div>
         <button
           className="modal-close is-large"
