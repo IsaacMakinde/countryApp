@@ -71,7 +71,7 @@ const CountryCard: React.FC<CountryCardProps> = ({ country }) => {
               </div>
               <div className="level-item is-mobile has-text-centered">
                 <div>
-                  <p className="heading">Language</p>
+                  <p className="heading">CCA3</p>
                   <p className="title">
                     {country?.cca3 ? country?.cca3 : "N/A"}
                   </p>
