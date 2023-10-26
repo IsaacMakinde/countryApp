@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Country } from "../models/country.class";
 import CountrySearchResults from "./CountrySearchResults";
 
-import FetchClient from "../serviceClients/fetchClient";
-import CountryService from "../services/CountryService";
+import { FetchClient } from "../serviceClients/fetchClient";
+import CountryService, { IServiceResponse } from "../services/CountryService";
 
 const SearchPage: React.FC = () => {
   const [query, setQuery] = useState<string>("");
@@ -37,44 +37,46 @@ const SearchPage: React.FC = () => {
   const fetchCountry = async (query: string, mode: string) => {
     try {
       const countryService = new CountryService(FetchClient);
-      let result;
+
+      let serviceResponse: IServiceResponse<Country | Country[]>;
       switch (mode) {
         case "Name":
-          result = await countryService.getCountriesByName(query);
+          serviceResponse = await countryService.getCountriesByName(query);
           break;
         case "Code":
-          result = await countryService.getCountryByCode(query);
+          serviceResponse = await countryService.getCountryByCode(query);
           break;
         case "Language":
-          result = await countryService.getCountriesByLanguage(query);
+          serviceResponse = await countryService.getCountriesByLanguage(query);
           break;
         default:
           throw new Error("Invalid search mode");
       }
-      handleSearchResults(result);
+      handleSearchResults(serviceResponse);
     } catch (error) {
       console.error(error);
+    } finally {
       setLoading(false);
     }
   };
 
-  const handleSearchResults = (result: Country | Country[]) => {
-    if (Array.isArray(result)) {
-      if (result.length === 0) {
+  const handleSearchResults = (
+    serviceResponse: IServiceResponse<Country | Country[]>
+  ) => {
+    const { data, error } = serviceResponse;
+
+    if (error) {
+      console.log(`An error occurred: ${error}`);
+      console.log(`An error occurred: ${error}`);
+      setResults([]);
+    } else {
+      if (Array.isArray(data) && data.length === 0) {
         setResults([]);
       } else {
-        setResults(result);
-        setLoading(false);
-      }
-    } else {
-      // Check for unexpected response format
-      if (result && result.status === 404) {
-        setResults([]);
-      } else if (result) {
-        setResults([result]);
-        setLoading(false);
+        setResults(Array.isArray(data) ? data : data ? [data] : []);
       }
     }
+    setLoading(false);
 
     console.log("from new func", results);
   };
@@ -83,8 +85,6 @@ const SearchPage: React.FC = () => {
 
   useEffect(() => {
     setLoading(false);
-    console.log("from use effect", results);
-    console.log("from use effect", loading);
   }, [results]);
 
   return (
@@ -100,7 +100,6 @@ const SearchPage: React.FC = () => {
                   maxLength={20}
                   onChange={handleInputChange}
                   placeholder="Input a Country"
-                  title="hello"
                   value={query}
                 />
               </p>
