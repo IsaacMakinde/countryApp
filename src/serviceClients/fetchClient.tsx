@@ -1,7 +1,13 @@
-interface FetchClient {
+export interface IFetchClient {
   get(url: string): Promise<Response>;
-  post(url: string, body: any): Promise<Response>;
-  // Add other methods as needed
 }
-
-export default FetchClient;
+export const fetchClient: IFetchClient = {
+  async get(url: string) {
+    return await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  },
+};

@@ -1,5 +1,4 @@
-import React from "react";
-import { Country } from "../models/country.class";
+                                                        import { Country } from "../models/country.class";
 import CountryCard from "./CountryCard"; // Import the CountryCard component
 
 interface CountrySearchResultsProps {

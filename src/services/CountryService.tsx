@@ -1,7 +1,7 @@
-import FetchClient from "../serviceClients/fetchClient";
+import { IFetchClient } from "../serviceClients/fetchClient";
 class CountryService {
-  private httpClient: FetchClient;
-  constructor(httpClient: FetchClient) {
+  private httpClient: IFetchClient;
+  constructor(httpClient: IFetchClient) {
     this.httpClient = httpClient;
   }
 
