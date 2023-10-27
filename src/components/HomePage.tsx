@@ -31,6 +31,12 @@ const SearchPage: React.FC = () => {
     }
   };
 
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      handleSearch();
+    }
+  };
+
   const fetchCountry = async (query: string, mode: string) => {
     try {
       const countryService = new CountryService(FetchClient);
@@ -93,6 +99,7 @@ const SearchPage: React.FC = () => {
                   className={`input ${validInput ? "is-info" : "is-danger"}`}
                   maxLength={20}
                   onChange={handleInputChange}
+                  onKeyDown={handleKeyPress}
                   placeholder="Input a Country"
                   value={query}
                 />
